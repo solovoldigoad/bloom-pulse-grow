@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
 import heroImage from '@/assets/smart-farm-hero.jpg';
 import { 
   Thermometer, 
@@ -14,7 +15,9 @@ import {
   Fan,
   Sprout,
   Globe,
-  Activity
+  Activity,
+  Snowflake,
+  Sparkles
 } from 'lucide-react';
 
 interface SensorData {
@@ -22,20 +25,21 @@ interface SensorData {
   humidity: number;
   ethylene: number;
   ventilation: boolean;
-  irrigation: boolean;
-  lighting: boolean;
+  sprinkler: boolean;
+  coolingFan: boolean;
   autoVentilation: boolean;
 }
 
 const SmartFarmDashboard = () => {
-  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const navigate = useNavigate();
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [sensorData, setSensorData] = useState<SensorData>({
     temperature: 24.5,
     humidity: 62,
     ethylene: 2.3,
     ventilation: false,
-    irrigation: true,
-    lighting: true,
+    sprinkler: true,
+    coolingFan: true,
     autoVentilation: true,
   });
 
@@ -61,9 +65,9 @@ const SmartFarmDashboard = () => {
       humidity: "Humidity",
       ethylene: "Ethylene Gas",
       controls: "System Controls",
-      ventilation: "Ventilation",
-      irrigation: "Irrigation",
-      lighting: "LED Lighting",
+      ventilation: "Ventilation Control",
+      sprinkler: "Sprinkler System",
+      coolingFan: "Cooling Fan",
       autoVent: "Auto Ventilation",
       alerts: "System Alerts",
       optimal: "Optimal",
@@ -74,29 +78,31 @@ const SmartFarmDashboard = () => {
       active: "Active",
       inactive: "Inactive",
       on: "ON",
-      off: "OFF"
+      off: "OFF",
+      sprinklerStatus: "Spray Status"
     },
-    es: {
-      title: "Centro de Control Agrícola Inteligente",
-      subtitle: "Sistema de monitoreo y control en tiempo real",
-      temperature: "Temperatura",
-      humidity: "Humedad",
-      ethylene: "Gas Etileno",
-      controls: "Controles del Sistema",
-      ventilation: "Ventilación",
-      irrigation: "Riego",
-      lighting: "Iluminación LED",
-      autoVent: "Ventilación Automática",
-      alerts: "Alertas del Sistema",
-      optimal: "Óptimo",
-      warning: "Advertencia",
-      critical: "Crítico",
-      ethyleneAlert: "Los niveles de etileno indican maduración acelerada",
-      tempAlert: "Temperatura fuera del rango óptimo",
-      active: "Activo",
-      inactive: "Inactivo",
-      on: "ENCENDIDO",
-      off: "APAGADO"
+    hi: {
+      title: "स्मार्ट कृषि नियंत्रण केंद्र",
+      subtitle: "वास्तविक समय निगरानी और नियंत्रण प्रणाली",
+      temperature: "तापमान",
+      humidity: "नमी",
+      ethylene: "एथिलीन गैस",
+      controls: "सिस्टम नियंत्रण",
+      ventilation: "वेंटिलेशन नियंत्रण",
+      sprinkler: "स्प्रिंकलर सिस्टम",
+      coolingFan: "कूलिंग फैन",
+      autoVent: "स्वचालित वेंटिलेशन",
+      alerts: "सिस्टम अलर्ट",
+      optimal: "उत्तम",
+      warning: "चेतावनी",
+      critical: "गंभीर",
+      ethyleneAlert: "एथिलीन का स्तर तेज पकने का संकेत देता है",
+      tempAlert: "तापमान उत्तम सीमा से बाहर",
+      active: "सक्रिय",
+      inactive: "निष्क्रिय",
+      on: "चालू",
+      off: "बंद",
+      sprinklerStatus: "फवारणी स्थिती"
     }
   };
 
@@ -163,21 +169,21 @@ const SmartFarmDashboard = () => {
             variant={language === 'en' ? 'secondary' : 'outline'}
             size="sm"
             onClick={() => setLanguage('en')}
-            className="animate-scale-in bg-white/10 border-white/20 text-white hover:bg-white/20"
+            className="animate-scale-in bg-white/10 border-white/20 text-white hover:bg-white/20 hover-scale"
             style={{ animationDelay: '0.1s' }}
           >
             <Globe className="mr-2" size={16} />
             EN
           </Button>
           <Button
-            variant={language === 'es' ? 'secondary' : 'outline'}
+            variant={language === 'hi' ? 'secondary' : 'outline'}
             size="sm"
-            onClick={() => setLanguage('es')}
-            className="animate-scale-in bg-white/10 border-white/20 text-white hover:bg-white/20"
+            onClick={() => setLanguage('hi')}
+            className="animate-scale-in bg-white/10 border-white/20 text-white hover:bg-white/20 hover-scale"
             style={{ animationDelay: '0.2s' }}
           >
             <Globe className="mr-2" size={16} />
-            ES
+            हिं
           </Button>
         </div>
       </div>
@@ -287,11 +293,11 @@ const SmartFarmDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* Ventilation */}
+              {/* Ventilation Control - Links to Ventilation Page */}
               <Button
                 variant={sensorData.ventilation ? 'default' : 'outline'}
-                onClick={() => toggleControl('ventilation')}
-                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in ${
+                onClick={() => navigate('/ventilation')}
+                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in hover-scale ${
                   sensorData.ventilation ? 'control-active' : ''
                 }`}
                 style={{ animationDelay: '0.7s' }}
@@ -299,7 +305,7 @@ const SmartFarmDashboard = () => {
                 <Fan className={`${sensorData.ventilation ? 'animate-spin' : ''}`} size={24} />
                 <div className="text-center">
                   <div className="font-semibold">{t.ventilation}</div>
-                  <div className="text-xs">{sensorData.ventilation ? t.on : t.off}</div>
+                  <div className="text-xs">{sensorData.ventilation ? t.active : t.inactive}</div>
                 </div>
               </Button>
 
@@ -307,7 +313,7 @@ const SmartFarmDashboard = () => {
               <Button
                 variant={sensorData.autoVentilation ? 'default' : 'outline'}
                 onClick={() => toggleControl('autoVentilation')}
-                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in ${
+                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in hover-scale ${
                   sensorData.autoVentilation ? 'control-active' : ''
                 }`}
                 style={{ animationDelay: '0.8s' }}
@@ -319,35 +325,35 @@ const SmartFarmDashboard = () => {
                 </div>
               </Button>
 
-              {/* Irrigation */}
+              {/* Sprinkler System */}
               <Button
-                variant={sensorData.irrigation ? 'default' : 'outline'}
-                onClick={() => toggleControl('irrigation')}
-                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in ${
-                  sensorData.irrigation ? 'control-active' : ''
+                variant={sensorData.sprinkler ? 'default' : 'outline'}
+                onClick={() => toggleControl('sprinkler')}
+                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in hover-scale ${
+                  sensorData.sprinkler ? 'control-active' : ''
                 }`}
                 style={{ animationDelay: '0.9s' }}
               >
-                <Droplets className={`${sensorData.irrigation ? 'animate-bounce-soft' : ''}`} size={24} />
+                <Sparkles className={`${sensorData.sprinkler ? 'animate-bounce-soft' : ''}`} size={24} />
                 <div className="text-center">
-                  <div className="font-semibold">{t.irrigation}</div>
-                  <div className="text-xs">{sensorData.irrigation ? t.on : t.off}</div>
+                  <div className="font-semibold">{t.sprinkler}</div>
+                  <div className="text-xs">{language === 'hi' ? t.sprinklerStatus : (sensorData.sprinkler ? t.on : t.off)}</div>
                 </div>
               </Button>
 
-              {/* Lighting */}
+              {/* Cooling Fan */}
               <Button
-                variant={sensorData.lighting ? 'default' : 'outline'}
-                onClick={() => toggleControl('lighting')}
-                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in ${
-                  sensorData.lighting ? 'control-active' : ''
+                variant={sensorData.coolingFan ? 'default' : 'outline'}
+                onClick={() => toggleControl('coolingFan')}
+                className={`h-20 flex-col gap-2 transition-all duration-300 animate-scale-in hover-scale ${
+                  sensorData.coolingFan ? 'control-active' : ''
                 }`}
                 style={{ animationDelay: '1s' }}
               >
-                <Zap className={`${sensorData.lighting ? 'animate-pulse-glow' : ''}`} size={24} />
+                <Snowflake className={`${sensorData.coolingFan ? 'animate-pulse-glow' : ''}`} size={24} />
                 <div className="text-center">
-                  <div className="font-semibold">{t.lighting}</div>
-                  <div className="text-xs">{sensorData.lighting ? t.on : t.off}</div>
+                  <div className="font-semibold">{t.coolingFan}</div>
+                  <div className="text-xs">{sensorData.coolingFan ? t.on : t.off}</div>
                 </div>
               </Button>
             </div>
